@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-9kvgj&_dp_xvj!p#12ofg@z!u4c_8x@au=c4s11edtu%%6xguk
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["telegbot-iehi.zeet-team-rizaldiabyannata.zeet.app"]
 
 
 # Application definition
