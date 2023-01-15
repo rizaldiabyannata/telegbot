@@ -52,9 +52,9 @@ def delete_expired_tasks():
 
 def send_message_reminder(task_name, deadline, descrip, chat_id):
     message = f'Reminder: kamu ada tugas yang belum dikerjakan\nMatkul: {task_name}\nDeadline: {deadline}\nKet: {descrip}'
-    bot.send_message(chat_id, text=message)
+    bot.send_message(bot.send_message, text=message)
 
-def schedule_reminders(task_name, deadline, descrip, process, chat_id):
+def schedule_reminders(task_name, deadline, descrip, process):
     current_time = datetime.datetime.now()
     reminder_time = current_time + datetime.timedelta(minutes=5)
     while reminder_time < deadline and process == 0 : 
@@ -63,7 +63,7 @@ def schedule_reminders(task_name, deadline, descrip, process, chat_id):
             interval = datetime.timedelta(minutes=1)
         else:
             interval = datetime.timedelta(minutes=5)
-        scheduler.add_job(send_message_reminder, 'date', run_date=reminder_time, args=[task_name, deadline, descrip, chat_id])
+        scheduler.add_job(send_message_reminder, 'date', run_date=reminder_time, args=[task_name, deadline, descrip])
         reminder_time += interval
     
 def schedule_reminders_from_database():
@@ -71,7 +71,6 @@ def schedule_reminders_from_database():
     cursor = conn.cursor()
     cursor.execute("SELECT * FROM bot_scheduler")
     rows = cursor.fetchall()
-    chat_id = "1316527915"
     for row in rows:
         task_name = row[1]
         try:
@@ -82,7 +81,7 @@ def schedule_reminders_from_database():
         descrip = row[3]
         process = row[4]
         print(task_name,descrip,deadline,process)
-        schedule_reminders(task_name, deadline, descrip, process, chat_id)
+        schedule_reminders(task_name, deadline, descrip, process)
         
 @bot.message_handler(commands=['extract'])
 def extract_data(message):
@@ -207,7 +206,7 @@ def run_bot():
             bot.polling()
         except Exception as e:
             print(e)
-            bot.send_message(chat_id="1316527915" , text = f"{e}" )
+            bot.send_message(bot.send_message , text = f"{e}" )
             bot.stop_polling
             time.sleep(5)
     
