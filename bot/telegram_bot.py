@@ -9,7 +9,6 @@ import datetime
 from apscheduler.schedulers.blocking import BlockingScheduler
 import time
 import requests
-from django.http import HttpResponse
 
 scheduler = BlockingScheduler(timezone=pytz.timezone('Asia/Makassar'))
 openai.api_key = "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"
