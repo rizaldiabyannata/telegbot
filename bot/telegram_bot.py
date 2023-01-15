@@ -11,8 +11,13 @@ import time
 import requests
 
 scheduler = BlockingScheduler(timezone=pytz.timezone('Asia/Makassar'))
-openai.api_key = "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"
-api = '5723275860:AAG0cf1G29zEVSodaI6fN-3uPRr7QkQ98tw'
+
+conn = sqlite3.connect('Database.db')
+cursor = conn.cursor()
+cursor.execute("SELECT openai_api, telegram_api FROM bot_data_api WHERE id = 1")
+openai_api, telegram_api = cursor.fetchone()
+openai.api_key = openai_api
+api = telegram_api
 bot = telebot.TeleBot(api)
 
 def respon(question):

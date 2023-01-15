@@ -10,3 +10,7 @@ class scheduler(models.Model):
     
     def __str__(self):
         return "{}".format(self.Matkul)
+
+class data_api(models.Model):
+    telegram_api = models.CharField(max_length=255)
+    openai_api = models.CharField(max_length=255)
