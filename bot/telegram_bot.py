@@ -58,13 +58,13 @@ def send_message_reminder(task_name, deadline, descrip):
 
 def schedule_reminders(task_name, deadline, descrip, process):
     current_time = datetime.datetime.now()
-    reminder_time = current_time + datetime.timedelta(minutes=5)
+    reminder_time = current_time + datetime.timedelta(minutes=30)
     while reminder_time < deadline and process == 0 : 
         
         if reminder_time > deadline - datetime.timedelta(hours=2):
-            interval = datetime.timedelta(minutes=1)
+            interval = datetime.timedelta(minutes=15)
         else:
-            interval = datetime.timedelta(minutes=5)
+            interval = datetime.timedelta(minutes=30)
         scheduler.add_job(send_message_reminder, 'date', run_date=reminder_time, args=[task_name, deadline, descrip])
         reminder_time += interval
     
