@@ -217,5 +217,3 @@ def run_bot():
             bot.send_message(chat_id, text = f"{e}" )
             bot.stop_polling
             time.sleep(5)
-    
-            
