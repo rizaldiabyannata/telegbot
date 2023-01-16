@@ -138,6 +138,8 @@ def keyboard_markup(matkul):
 
 @bot.callback_query_handler(func=lambda call: True)
 def callback_query(call):
+    conn = sqlite3.connect('Database.db')
+    cursor = conn.cursor()
     cursor.execute(
         "UPDATE bot_scheduler SET Status = 1 WHERE Matkul = ?", (call.data,))
     conn.commit()
