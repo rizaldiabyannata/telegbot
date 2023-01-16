@@ -23,9 +23,13 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-9kvgj&_dp_xvj!p#12ofg@z!u4c_8x@au=c4s11edtu%%6xguk'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
+<<<<<<< HEAD
+ALLOWED_HOSTS = ["https://telegbot-iehi.zeet-team-rizaldiabyannata.zeet.app"]
+=======
 ALLOWED_HOSTS = ["telegbot-iehi.zeet-team-rizaldiabyannata.zeet.app", "127.0.0.1"]
+>>>>>>> 33d2cb9febc6abf64218761ace610e251caa3088
 
 
 # Application definition
