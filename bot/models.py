@@ -14,3 +14,4 @@ class scheduler(models.Model):
 class data_api(models.Model):
     telegram_api = models.CharField(max_length=255)
     openai_api = models.CharField(max_length=255)
+    chatId_telegram = models.CharField(max_length=100)

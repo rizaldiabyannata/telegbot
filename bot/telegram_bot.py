@@ -14,11 +14,10 @@ scheduler = BlockingScheduler(timezone=pytz.timezone('Asia/Makassar'))
 
 conn = sqlite3.connect('Database.db')
 cursor = conn.cursor()
-cursor.execute("SELECT openai_api, telegram_api FROM bot_data_api WHERE id = 1")
-openai_api, telegram_api = cursor.fetchone()
+cursor.execute("SELECT openai_api, telegram_api, chatId_telegram FROM bot_data_api WHERE id = 1")
+openai_api, telegram_api, chat_id = cursor.fetchone()
 openai.api_key = openai_api
-api = telegram_api
-bot = telebot.TeleBot(api)
+bot = telebot.TeleBot(telegram_api)
 
 def respon(question):
     prmt = "Q: {qst}\nA:".format(qst=question)
@@ -38,8 +37,7 @@ def respon(question):
 def send_welcome(message):
     bot.send_message(
         message.chat.id, 'gunakan /ask untuk bertannya \nJika membuat jadwal gunakan /extract dengan format /extract\nMatkul: xxxxxxx \nDeadline: YYYY-MM-DD HH:MM \nKeterangan: xxxxxxxxxxx')
-
-
+    
 @bot.message_handler(func=lambda message: True, commands=["ask"])
 def echo_message(message):
     msg = message.text
@@ -47,16 +45,16 @@ def echo_message(message):
     bot.send_message(message.chat.id, response)
     
 def delete_expired_tasks():
+    threshold_time = datetime.datetime.now() - datetime.timedelta(days=2)
     conn = sqlite3.connect('Database.db')
     cursor = conn.cursor()
-    threshold_time = datetime.datetime.now() - datetime.timedelta(days=2)
     cursor.execute("DELETE FROM bot_scheduler WHERE Dateline < ?", (threshold_time,))
     conn.commit()
     conn.close()
 
-def send_message_reminder(task_name, deadline, descrip, chat_id):
-    message = f'Reminder: kamu ada tugas yang belum dikerjakan\nMatkul: {task_name}\nDeadline: {deadline}\nKet: {descrip}'
-    bot.send_message(bot.send_message, text=message)
+def send_message_reminder(task_name, deadline, descrip):
+    message = f'Reminder: kamu ada tugas yang belum dikerjakan\nMjatkul: {task_name}\nDeadline: {deadline}\nKet: {descrip}'
+    bot.send_message(chat_id, text=message)
 
 def schedule_reminders(task_name, deadline, descrip, process):
     current_time = datetime.datetime.now()
@@ -86,6 +84,15 @@ def schedule_reminders_from_database():
         process = row[4]
         print(task_name,descrip,deadline,process)
         schedule_reminders(task_name, deadline, descrip, process)
+            
+@bot.message_handler(commands=["remainder"])
+def handle_reminder_command(message):
+    schedule_reminders_from_database()
+    if len(scheduler.get_jobs()) > 0:
+        bot.send_message(message.chat.id, text="Pengingat telah dijadwalkan.")
+        scheduler.start()
+    else:
+        bot.send_message(message.chat.id, text="Tidak ada tugas yang harus diselesaikan")
         
 @bot.message_handler(commands=['extract'])
 def extract_data(message):
@@ -101,19 +108,16 @@ def extract_data(message):
     INSERT INTO bot_scheduler (Matkul, Dateline, Keterangan, Status) VALUES (?, ?, ?, ?)
     ''', (matkul, deadline, keterangan, 0))
     conn.commit()
+    conn.close()
     bot.send_message(message.chat.id, "Extract berhasil dilakukan")
     print("Data successfully extracted and stored in the database.")
-    conn.close()
-    
-@bot.message_handler(commands=["remainder"])
-def handle_reminder_command(message):
-    schedule_reminders_from_database()
-    if len(scheduler.get_jobs()) > 0:
-        bot.send_message(message.chat.id, text="Pengingat telah dijadwalkan.")
-        scheduler.start()
+    if scheduler.get_jobs():
+        scheduler.remove_all_jobs()
+        scheduler.shutdown()
+        handle_reminder_command(message)
     else:
-        bot.send_message(message.chat.id, text="Tidak ada tugas yang harus diselesaikan")
-
+        handle_reminder_command(message)
+        
 @bot.message_handler(commands=["stop"])
 def handle_pause_reminder(message):
     scheduler.shutdown()
@@ -134,8 +138,6 @@ def keyboard_markup(matkul):
 
 @bot.callback_query_handler(func=lambda call: True)
 def callback_query(call):
-    conn = sqlite3.connect('Database.db')
-    cursor = conn.cursor()
     cursor.execute(
         "UPDATE bot_scheduler SET Status = 1 WHERE Matkul = ?", (call.data,))
     conn.commit()
@@ -164,9 +166,9 @@ def list_task(message):
 @bot.message_handler(func=lambda message: True, commands=["delete"])
 def delete_select_task(message):
     task_names = message.text.split()[1:]
-    conn = sqlite3.connect('Database.db')
-    cursor = conn.cursor()
     try:
+        conn = sqlite3.connect('Database.db')
+        cursor = conn.cursor()
         cursor.execute(
             "DELETE FROM bot_scheduler WHERE Matkul = ?", (task_names))
         bot.send_message(message.chat.id, f"Tugas {task_names} telah dihapus")
@@ -210,7 +212,7 @@ def run_bot():
             bot.polling()
         except Exception as e:
             print(e)
-            bot.send_message(bot.send_message , text = f"{e}" )
+            bot.send_message(chat_id, text = f"{e}" )
             bot.stop_polling
             time.sleep(5)
     
