@@ -16,11 +16,6 @@ from pathlib import Path
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
-import environ
-
-env = environ.Env()
-environ.Env.read_env()
-
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
 
@@ -78,19 +73,13 @@ WSGI_APPLICATION = 'telegbot.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.sqlite3',
-#         'NAME': 'Database.db',
-#     }
-# }
-
-
-import dj_database_url
-
 DATABASES = {
-    'default' : dj_database_url.parse("postgres://aldi:WWX3OvubKv7dcX1eBrRRqr7mBq8FkGjY@dpg-cfs5f8pmbjshr9mp4hm0-a.singapore-postgres.render.com/telebot_2f3z")
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': 'Database.db',
+    }
 }
+
 
 # Password validation
 # https://docs.djangoproject.com/en/4.1/ref/settings/#auth-password-validators
