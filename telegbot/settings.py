@@ -16,6 +16,11 @@ from pathlib import Path
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
+import environ
+
+env = environ.Env()
+environ.Env.read_env()
+
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
 
@@ -23,9 +28,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-9kvgj&_dp_xvj!p#12ofg@z!u4c_8x@au=c4s11edtu%%6xguk'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
-ALLOWED_HOSTS = ["telegbot-iehi.zeet-team-rizaldiabyannata.zeet.app", "127.0.0.1"]
+ALLOWED_HOSTS = ["*"]
 
 # Application definition
 
@@ -73,13 +78,19 @@ WSGI_APPLICATION = 'telegbot.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': 'Database.db',
-    }
-}
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': 'Database.db',
+#     }
+# }
 
+
+import dj_database_url
+
+DATABASE = {
+    'default' : dj_database_url.parse(env("DATABASE_URL"))
+}
 
 # Password validation
 # https://docs.djangoproject.com/en/4.1/ref/settings/#auth-password-validators
