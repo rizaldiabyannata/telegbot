@@ -80,9 +80,9 @@ def schedule_reminders(task_name, deadline, descrip, process):
     while reminder_time < deadline and process == 0 : 
         
         if reminder_time > deadline - datetime.timedelta(hours=2):
-            interval = datetime.timedelta(minutes=15)
-        else:
             interval = datetime.timedelta(minutes=30)
+        else:
+            interval = datetime.timedelta(minutes=10)
         scheduler.add_job(send_message_reminder, 'date', run_date=reminder_time, args=[task_name, deadline, descrip])
         reminder_time += interval
     
@@ -228,7 +228,6 @@ def check_weather(message):
 def run_bot():
     while True:
         try:
-            bot.delete_webhook()
             print('bot start running')
             bot.polling()
         except Exception as e:
