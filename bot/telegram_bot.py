@@ -32,6 +32,18 @@ def respon(question):
     )
     return response.choices[0].text
 
+def respon_jpn(question):
+    prmt = "Q: translate text from indonesia language to japanese with casual man form. {qst}\nKanji:\nRomanji:".format(qst=question)
+    response = openai.Completion.create(
+        model="text-davinci-003",
+        prompt=prmt,
+        temperature=1,
+        max_tokens=4000,
+        top_p=1.0,
+        frequency_penalty=0.0,
+        presence_penalty=0.0
+    )
+    return response.choices[0].text
 
 @bot.message_handler(commands=['help'])
 def send_welcome(message):
@@ -42,6 +54,12 @@ def send_welcome(message):
 def echo_message(message):
     msg = message.text
     response = respon(msg)
+    bot.send_message(message.chat.id, response)
+
+@bot.message_handler(func=lambda message: True, commands=["jpn"])
+def echo_message(message):
+    msg = message.text
+    response = respon_jpn(msg)
     bot.send_message(message.chat.id, response)
     
 def delete_expired_tasks():
@@ -210,6 +228,7 @@ def check_weather(message):
 def run_bot():
     while True:
         try:
+            bot.delete_webhook()
             print('bot start running')
             bot.polling()
         except Exception as e:
