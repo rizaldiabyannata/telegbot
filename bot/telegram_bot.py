@@ -232,6 +232,7 @@ def run_bot():
             bot.polling()
         except Exception as e:
             print(e)
+            bot.delete_webhook()
             bot.send_message(chat_id, text = f"{e}" )
             bot.stop_polling
             time.sleep(5)
