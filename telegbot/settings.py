@@ -88,8 +88,8 @@ WSGI_APPLICATION = 'telegbot.wsgi.application'
 
 import dj_database_url
 
-DATABASE = {
-    'default' : dj_database_url.parse(env("DATABASE_URL"))
+DATABASES = {
+    'default' : dj_database_url.parse("postgres://aldi:WWX3OvubKv7dcX1eBrRRqr7mBq8FkGjY@dpg-cfs5f8pmbjshr9mp4hm0-a.singapore-postgres.render.com/telebot_2f3z")
 }
 
 # Password validation
