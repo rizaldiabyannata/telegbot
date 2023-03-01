@@ -9,6 +9,8 @@ import datetime
 from apscheduler.schedulers.blocking import BlockingScheduler
 import time
 import requests
+import webbrowser
+
 
 scheduler = BlockingScheduler(timezone=pytz.timezone('Asia/Makassar'))
 
@@ -225,16 +227,21 @@ def check_weather(message):
         else:
             bot.send_message(message.chat.id, "Sorry, I could not find information for that city.")
 
+def directweb(url):
+    webbrowser.open(url)
+
 @bot.message_handler(commands=["restart_bot"])
 def restartBot(message):
     bot.stop_polling()
     time.sleep(100)
     bot.polling()
+    directweb("https://telegbot.onrender.com")
 
 def run_bot():
     while True:
         try:
             print('bot start running')
+            directweb('https://telegbot.onrender.com')
             bot.polling()
         except Exception as e:
             print(e)
