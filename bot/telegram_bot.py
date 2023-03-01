@@ -224,7 +224,13 @@ def check_weather(message):
             )
         else:
             bot.send_message(message.chat.id, "Sorry, I could not find information for that city.")
-   
+
+@bot.message_handler(commands=["restart_bot"])
+def restartBot(message):
+    bot.stop_polling()
+    time.sleep(100)
+    bot.polling()
+
 def run_bot():
     while True:
         try:
@@ -234,5 +240,5 @@ def run_bot():
             print(e)
             bot.delete_webhook()
             bot.send_message(chat_id, text = f"{e}" )
-            bot.stop_polling
+            bot.stop_polling()
             time.sleep(5)
